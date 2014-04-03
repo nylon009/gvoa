@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">GVOA</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="rss_site">RSS Site</string>
+    <string name="thread_started">Loading now, please wait a few seconds and try again</string>
+    <string name="get_rss_failure">Get RSS Feed failed</string>
+
+</resources>
