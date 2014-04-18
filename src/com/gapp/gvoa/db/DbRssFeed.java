@@ -27,6 +27,19 @@ public class DbRssFeed {
     		                     + KEY_DESCRIPTION + " TEXT" + ")";
 	
     
+    
+    
+    
+    public static List<String> firstTimeInitSql()
+    {
+    	ArrayList<String> list = new ArrayList<String>();
+    	
+    	list.add("INSERT INTO trssfeed VALUES (101, 'VOA Latest','http://www.51voa.com/voa.xml','Voa latest')");
+    	list.add("INSERT INTO trssfeed VALUES (102, 'VOA Special','http://www.51voa.com/sp.xml','VOA Special English')");
+    	list.add("INSERT INTO trssfeed VALUES (103, 'VOA Standard','http://www.51voa.com/st.xml','VOA Standard English')");
+    	return list;     	
+    }
+    
     /**
      * Reading all rows from database
      * */
@@ -34,7 +47,7 @@ public class DbRssFeed {
         List<RssFeed> feedList = new ArrayList<RssFeed>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_RSSFEED  + " ORDER BY id DESC"; 
-        SQLiteDatabase db = GRSSDbHandler.getInstance().getMyDataBase();
+        SQLiteDatabase db = GRSSDbHandler.getInstance().getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
  
         // looping through all rows and adding to list
@@ -50,5 +63,6 @@ public class DbRssFeed {
         cursor.close();
         return feedList;
     }
+
     
 }

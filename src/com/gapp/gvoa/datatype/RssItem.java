@@ -10,14 +10,16 @@ public class RssItem implements Parcelable {
 	private String pubDate = null;
 	private String link = null;
 	private String description = null;
-    private String fullText = null;    
+    private String fullText = null; 
+    private String mp3url = null;
+    private String localmp3 = null;
     
 	public RssItem() {
 		
 	}
 
 	public RssItem(Integer id, Integer feedID, String title, String sdate,
-			String link, String description,  String fullText) {
+			String link, String description,  String fullText, String mp3url, String localmp3) {
 		super();
 		this.id = id;
 		this.feedID = feedID;
@@ -26,6 +28,8 @@ public class RssItem implements Parcelable {
 		this.link = link;
 		this.description = description;
 		this.fullText = fullText;
+		this.mp3url = mp3url;
+		this.localmp3 = localmp3;
 	}
 	
     public static final Parcelable.Creator<RssItem> CREATOR = new Creator<RssItem>() {  
@@ -47,6 +51,8 @@ public class RssItem implements Parcelable {
 		link = in.readString();
 		description = in.readString();
 		fullText = in.readString();	
+		mp3url = in.readString();
+		localmp3=in.readString();
     }
 	
 
@@ -99,6 +105,22 @@ public class RssItem implements Parcelable {
 		return title;
 	}
 
+	public String getMp3url() {
+		return mp3url;
+	}
+
+	public void setMp3url(String mp3url) {
+		this.mp3url = mp3url;
+	}
+
+	public String getLocalmp3() {
+		return localmp3;
+	}
+
+	public void setLocalmp3(String localmp3) {
+		this.localmp3 = localmp3;
+	}
+	
 	@Override
 	public int describeContents() {
 		return 0;
@@ -113,6 +135,10 @@ public class RssItem implements Parcelable {
 		dest.writeString(link);
 		dest.writeString(description);
 		dest.writeString(fullText);		
+		dest.writeString(mp3url);
+		dest.writeString(localmp3);
 	}
+
+
 	
 }

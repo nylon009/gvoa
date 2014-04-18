@@ -61,9 +61,10 @@ public class RssItemListActivity extends  Activity implements OnItemClickListene
         rssItemList = DbRssItem.getAllItems(rssFeed.getId());
         
         itemListView=(ListView)findViewById(android.R.id.list);
-        itemListView.setAdapter(new ArrayAdapter<RssItem>(this, 
-                                   android.R.layout.simple_list_item_1,
-                                rssItemList)); 
+       
+        ItemListAdapter adapter = new ItemListAdapter(this, rssItemList);
+        itemListView.setAdapter(adapter);
+
         
         itemListView.setClickable(true);
         itemListView.setOnItemClickListener(this);    

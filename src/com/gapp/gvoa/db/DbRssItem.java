@@ -24,6 +24,8 @@ public class DbRssItem {
     public static final String KEY_LINK = "link";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_FULL_TEXT = "fullText";
+    public static final String KEY_MP3_URL = "mp3url";
+    public static final String KEY_LOCAL_MP3 = "localmp3";
 	
     public static final String CREATE_TABLE_RSS_ITEM = "CREATE TABLE " + TABLE_RSSITEM + "(" 
                   	      + KEY_ID    + " INTEGER PRIMARY KEY," 
@@ -31,8 +33,10 @@ public class DbRssItem {
     		              + KEY_TITLE + " TEXT," 
     		              + KEY_DATE + " TEXT," 
                           + KEY_LINK  + " TEXT," 
-    		              + KEY_DESCRIPTION + " TEXT, " 
-                          + KEY_FULL_TEXT + " TEXT "+ ")";
+    		              + KEY_DESCRIPTION + " TEXT, "
+    		              + KEY_FULL_TEXT + " TEXT, "
+    		              + KEY_MP3_URL + " TEXT, "
+                          + KEY_LOCAL_MP3 + " TEXT "+ ")";
 	    
     /**
      * Adding a new RssItem in RssItems table Function will check if a site
@@ -41,7 +45,7 @@ public class DbRssItem {
      * */
     public static void addRssItem(RssItem item) {
     	//Log.i("GVOA", "addRssItem "+item); 
-        SQLiteDatabase db = GRSSDbHandler.getInstance().getMyDataBase();
+        SQLiteDatabase db = GRSSDbHandler.getInstance().getWritableDatabase();
  
         ContentValues values = new ContentValues();
         values.put(KEY_FEED_ID, item.getFeedID()); // site title
@@ -50,6 +54,8 @@ public class DbRssItem {
         values.put(KEY_LINK, item.getLink()); // site url
         values.put(KEY_DESCRIPTION, item.getDescription()); // site description
         values.put(KEY_FULL_TEXT, item.getFullText());
+        values.put(KEY_MP3_URL, item.getMp3url());
+        values.put(KEY_LOCAL_MP3,item.getLocalmp3());
         // Check if row already existed in database
         if (!isItemExists(db, item.getLink())) {
             // site not existed, create a new row
@@ -70,7 +76,7 @@ public class DbRssItem {
         String selectQuery = "SELECT  * FROM " + TABLE_RSSITEM
                 + " where "+ KEY_FEED_ID + "=" + feedid + " ORDER BY id DESC";
  
-        SQLiteDatabase db = GRSSDbHandler.getInstance().getMyDataBase();
+        SQLiteDatabase db = GRSSDbHandler.getInstance().getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
  
         // looping through all rows and adding to list
@@ -82,7 +88,9 @@ public class DbRssItem {
                 		                		   ,cursor.getString(3)
                 		                		   ,cursor.getString(4)
                 		                		   ,cursor.getString(5)
-                		                		   ,cursor.getString(6));
+                		                		   ,cursor.getString(6)
+                		                		   ,cursor.getString(7)
+                		                		   ,cursor.getString(8));
                 itemList.add(site);
             } while (cursor.moveToNext());
         }
@@ -94,7 +102,7 @@ public class DbRssItem {
      * Updating a single row row will be identified by rss link
      * */
     public static int updateItem(RssItem item) {
-        SQLiteDatabase db = GRSSDbHandler.getInstance().getMyDataBase();
+        SQLiteDatabase db = GRSSDbHandler.getInstance().getWritableDatabase();
  
         ContentValues values = new ContentValues();
         values.put(KEY_FEED_ID, item.getFeedID()); // site feedid
@@ -103,6 +111,9 @@ public class DbRssItem {
         values.put(KEY_LINK, item.getLink()); // site url
         values.put(KEY_DESCRIPTION, item.getDescription()); // site description
         values.put(KEY_FULL_TEXT, item.getFullText()); 
+        values.put(KEY_MP3_URL, item.getMp3url());
+        values.put(KEY_LOCAL_MP3, item.getLocalmp3());
+        
         // updating row return
         int update = db.update(TABLE_RSSITEM, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(item.getId()) });
@@ -116,7 +127,7 @@ public class DbRssItem {
      * Deleting single row
      * */
     public static void deleteItem(RssItem item) {
-        SQLiteDatabase db = GRSSDbHandler.getInstance().getMyDataBase();
+        SQLiteDatabase db = GRSSDbHandler.getInstance().getWritableDatabase();
         db.delete(TABLE_RSSITEM, KEY_ID + " = ?",
                 new String[] { String.valueOf(item.getId())});
         db.close();

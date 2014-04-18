@@ -48,7 +48,10 @@ public class ShowDetailActivity extends Activity
         
         rssItem = getIntent().getParcelableExtra(RssItem.class.getName()); 
         
-        if(rssItem.getFullText()==null)
+        TextView title= (TextView) findViewById(R.id.title);
+        title.setText(rssItem.getTitle());  
+        
+        if(rssItem.getFullText()==null || rssItem.getFullText() =="")
         {
         	if(mThread == null) {  
                 mThread = new Thread(runnable);  
@@ -57,11 +60,12 @@ public class ShowDetailActivity extends Activity
             else {  
                 Toast.makeText(getApplication(), getApplication().getString(R.string.thread_started), Toast.LENGTH_LONG).show();  
             }  
-        }        
-
-        TextView title= (TextView) findViewById(R.id.title);
-        title.setText(rssItem.getTitle());              
-      
+        } 
+        else
+        {
+       	     TextView detail= (TextView) findViewById(R.id.detail);
+             detail.setText(rssItem.getFullText());  
+        }    
     }
     
     
@@ -73,7 +77,8 @@ public class ShowDetailActivity extends Activity
                 //reload date from db
             	Log.i(tag, "Parse rssItem SUCCESS");
             	 TextView detail= (TextView) findViewById(R.id.detail);
-                 detail.setText(rssItem.getFullText());             	
+                 detail.setText(rssItem.getFullText());  
+                 DbRssItem.updateItem(rssItem);
             	mThread = null;
                 break;    
             case MSG_FAILURE:  
