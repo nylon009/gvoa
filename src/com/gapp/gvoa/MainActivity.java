@@ -8,14 +8,16 @@ import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
 import com.gapp.gvoa.db.GRSSDbHandler;
+import com.gapp.gvoa.ui.GVOASettings;
 import com.gapp.gvoa.ui.RssFeedListActivity;
-import com.gapp.gvoa.ui.SecondTab;
 
 public class MainActivity extends TabActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);       
+        
+        setTitle(R.string.app_name);
         
         //init database
         GRSSDbHandler.initInstance(this.getBaseContext());
@@ -31,7 +33,7 @@ public class MainActivity extends TabActivity {
         TabSpec secondTabSpec = tabHost.newTabSpec("Setting");
         
         firstTabSpec.setIndicator("RSS").setContent(new Intent(this,RssFeedListActivity.class));
-        secondTabSpec.setIndicator("Setting").setContent(new Intent(this,SecondTab.class));
+        secondTabSpec.setIndicator("Setting").setContent(new Intent(this,GVOASettings.class));
         
         
         /* Add tabSpec to the TabHost to display. */
