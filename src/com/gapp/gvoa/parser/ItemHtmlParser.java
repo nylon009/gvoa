@@ -36,6 +36,7 @@ public class ItemHtmlParser  {
     	{
     	    Log.i(tag,lrclink.attr("href")); 
     	}
+    	item.setStatus(RssItem.E_PARSE_TXT_OK);
 
         return ;
 	}

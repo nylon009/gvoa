@@ -26,6 +26,7 @@ public class DbRssItem {
     public static final String KEY_FULL_TEXT = "fullText";
     public static final String KEY_MP3_URL = "mp3url";
     public static final String KEY_LOCAL_MP3 = "localmp3";
+    public static final String KEY_STATUS = "status";
 	
     public static final String CREATE_TABLE_RSS_ITEM = "CREATE TABLE " + TABLE_RSSITEM + "(" 
                   	      + KEY_ID    + " INTEGER PRIMARY KEY," 
@@ -36,7 +37,9 @@ public class DbRssItem {
     		              + KEY_DESCRIPTION + " TEXT, "
     		              + KEY_FULL_TEXT + " TEXT, "
     		              + KEY_MP3_URL + " TEXT, "
-                          + KEY_LOCAL_MP3 + " TEXT "+ ")";
+                          + KEY_LOCAL_MP3 + " TEXT ,"
+    		              + KEY_STATUS + " INTEGER" 
+                          + ")";
 	    
     /**
      * Adding a new RssItem in RssItems table Function will check if a site
@@ -56,6 +59,7 @@ public class DbRssItem {
         values.put(KEY_FULL_TEXT, item.getFullText());
         values.put(KEY_MP3_URL, item.getMp3url());
         values.put(KEY_LOCAL_MP3,item.getLocalmp3());
+        values.put(KEY_STATUS,item.getStatus());
         // Check if row already existed in database
         if (!isItemExists(db, item.getLink())) {
             // site not existed, create a new row
@@ -90,7 +94,8 @@ public class DbRssItem {
                 		                		   ,cursor.getString(5)
                 		                		   ,cursor.getString(6)
                 		                		   ,cursor.getString(7)
-                		                		   ,cursor.getString(8));
+                		                		   ,cursor.getString(8)
+                		                		   ,Integer.parseInt(cursor.getString(9)));
                 itemList.add(site);
             } while (cursor.moveToNext());
         }
@@ -113,6 +118,7 @@ public class DbRssItem {
         values.put(KEY_FULL_TEXT, item.getFullText()); 
         values.put(KEY_MP3_URL, item.getMp3url());
         values.put(KEY_LOCAL_MP3, item.getLocalmp3());
+        values.put(KEY_STATUS, item.getStatus());
         
         // updating row return
         int update = db.update(TABLE_RSSITEM, values, KEY_ID + " = ?",

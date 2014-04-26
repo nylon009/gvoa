@@ -4,22 +4,34 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class RssItem implements Parcelable {
+	
+	public static Integer  E_INIT=0;
+	public static Integer  E_DOWN_TXT_OK=1;
+    public static Integer  E_DOWN_TXT_FAIL=2;
+    public static Integer  E_PARSE_TXT_OK=3;
+    public static Integer  E_PARSE_TXT_FAIL=4;
+    public static Integer  E_DOWN_MP3_OK=5;
+    public static Integer  E_DOWN_MP3_FAIL=6;
+	
     private Integer id = 0;
 	private Integer feedID = null;
     private String title = null;
 	private String pubDate = null;
+
+
 	private String link = null;
 	private String description = null;
     private String fullText = null; 
     private String mp3url = null;
     private String localmp3 = null;
+    private Integer  status=E_INIT;
     
 	public RssItem() {
 		
 	}
 
 	public RssItem(Integer id, Integer feedID, String title, String sdate,
-			String link, String description,  String fullText, String mp3url, String localmp3) {
+			String link, String description,  String fullText, String mp3url, String localmp3,Integer status) {
 		super();
 		this.id = id;
 		this.feedID = feedID;
@@ -30,6 +42,7 @@ public class RssItem implements Parcelable {
 		this.fullText = fullText;
 		this.mp3url = mp3url;
 		this.localmp3 = localmp3;
+		this.status = status;
 	}
 	
     public static final Parcelable.Creator<RssItem> CREATOR = new Creator<RssItem>() {  
@@ -53,10 +66,11 @@ public class RssItem implements Parcelable {
 		fullText = in.readString();	
 		mp3url = in.readString();
 		localmp3=in.readString();
+		status = in.readInt();
+
     }
 	
 
-	
 	public String getTitle() {
 		return title;
 	}
@@ -121,6 +135,14 @@ public class RssItem implements Parcelable {
 		this.localmp3 = localmp3;
 	}
 	
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	
 	@Override
 	public int describeContents() {
 		return 0;
@@ -137,8 +159,9 @@ public class RssItem implements Parcelable {
 		dest.writeString(fullText);		
 		dest.writeString(mp3url);
 		dest.writeString(localmp3);
+		dest.writeInt(status);
 	}
 
-
+	
 	
 }

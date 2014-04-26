@@ -62,17 +62,22 @@ public class RssItemListActivity extends  Activity implements OnItemClickListene
         
         itemListView=(ListView)findViewById(android.R.id.list);
        
-        ItemListAdapter adapter = new ItemListAdapter(this, rssItemList);
-        itemListView.setAdapter(adapter);
-
+        this.refreshList();
         
-        itemListView.setClickable(true);
-        itemListView.setOnItemClickListener(this);    
-
 		this.addListenerOnButton();
 
     }
 
+	void refreshList()
+	{
+        ItemListAdapter adapter = new ItemListAdapter(this, rssItemList);
+        itemListView.setAdapter(adapter);        
+        itemListView.setClickable(true);
+        itemListView.setOnItemClickListener(this);    
+
+	}
+	
+	
     private Thread mThread;  
     
     private Handler mHandler = new Handler() {  
@@ -82,10 +87,7 @@ public class RssItemListActivity extends  Activity implements OnItemClickListene
                 //reload date from db
             	Log.i(tag, "Reload rss from db now");
             	 rssItemList = DbRssItem.getAllItems(rssFeed.getId());
-            	 itemListView.setAdapter(new ArrayAdapter<RssItem>(RssItemListActivity.this, 
-                                           R.layout.rss_item_list_textview,
-                                         rssItemList)); 
-            	
+            	 refreshList();            	
             	mThread = null;
                 break;    
             case MSG_FAILURE:  

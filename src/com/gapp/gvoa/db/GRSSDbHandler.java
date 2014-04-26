@@ -11,7 +11,7 @@ public class GRSSDbHandler extends SQLiteOpenHelper {
 	private static final String TAG = "GVOA";
 	
 	// Database Version
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 
 	private static String DB_PATH = "/data/data/com.gapp.gvoa/databases/";
 	private static final String DATABASE_NAME = "rssReader.db";
