@@ -8,10 +8,11 @@ public class RssItem implements Parcelable {
 	public static Integer  E_INIT=0;
 	public static Integer  E_DOWN_TXT_OK=1;
     public static Integer  E_DOWN_TXT_FAIL=2;
-    public static Integer  E_PARSE_TXT_OK=3;
-    public static Integer  E_PARSE_TXT_FAIL=4;
-    public static Integer  E_DOWN_MP3_OK=5;
-    public static Integer  E_DOWN_MP3_FAIL=6;
+    public static Integer  E_PARSE_TXT_FAIL=3;
+    public static Integer  E_PARSE_TXT_OK=4;
+    public static Integer  E_DOWN_MP3_FAIL=5;
+    public static Integer  E_DOWN_MP3_OK=6;
+
 	
     private Integer id = 0;
 	private Integer feedID = null;

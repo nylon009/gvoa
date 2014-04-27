@@ -10,7 +10,7 @@ import com.gapp.gvoa.datatype.RssItem;
 
 public class ItemHtmlParser  {
 
-	public static final String tag = "GVOA.ItemHtmlParser";	
+	public static final String tag = "ItemHtmlParser";	
 	
 	
 	public static void parseItemDetail(RssItem item) throws  Exception
@@ -24,13 +24,21 @@ public class ItemHtmlParser  {
 		
 
 	    Document doc = Jsoup.connect(item.getLink()).get();
-	    Element content = doc.getElementById("content");
-	    item.setFullText(content.text());
-    	Element mp3link = content.select("a[id=mp3]").first();
+
+    	Element mp3link = doc.select("a[id=mp3]").first();
     	if(mp3link!=null)
     	{
     	    Log.i(tag,mp3link.attr("href")); 
+    	    item.setMp3url(mp3link.attr("href"));
     	}
+    	else
+    	{
+    		Log.i(tag,"can't get mp3");
+    	}
+	    
+    	Element content = doc.getElementById("content");	    
+	    item.setFullText(content.text());
+
     	Element lrclink = content.select("a[id=lrc]").first();
     	if(lrclink != null)
     	{

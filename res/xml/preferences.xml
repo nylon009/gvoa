@@ -24,6 +24,7 @@
         <CheckBoxPreference
                 android:key="pref_autodownload_mp3"
                 android:title="@string/download_mp3_automatically"
+                android:defaultValue="true"
                 />
         
          <ListPreference
@@ -32,7 +33,8 @@
                 android:summary="@string/remove_mp3_x_days_before_summary"
                 android:entries="@array/entries_list_remove_mp3_time"
                 android:entryValues="@array/entries_list_remove_mp3_days"
-                android:dialogTitle="@string/remove_mp3_x_days_before" />
+                android:dialogTitle="@string/remove_mp3_x_days_before" 
+                android:defaultValue = "7"/>
             
     </PreferenceCategory>                
   
