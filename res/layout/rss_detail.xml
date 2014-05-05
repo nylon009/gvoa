@@ -8,7 +8,8 @@
         android:id="@+id/title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="top" />
+        android:gravity="top"
+        android:textSize="20sp" />
 
     <ScrollView
         android:id="@+id/content_scroll"
@@ -22,7 +23,8 @@
         android:id="@+id/detail"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="fill" >
+        android:gravity="fill"
+        android:textSize="20sp" >
 
         </TextView>
         

@@ -38,7 +38,8 @@ public class ShowDetailActivity extends Activity
     
     private ImageButton buttonPlayStop; 
     private SeekBar seekBar;
-    private MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer=null;
+    private boolean is_playing_when_pause;
     
     
 	private RssItem rssItem; 
@@ -60,6 +61,9 @@ public class ShowDetailActivity extends Activity
         TextView title= (TextView) findViewById(R.id.title);
         title.setText(rssItem.getTitle());  
         
+        
+        
+        
         if(rssItem.getStatus()<RssItem.E_PARSE_TXT_OK || null==rssItem.getMp3url())
         {
         	if(mThread == null) {  
@@ -69,12 +73,12 @@ public class ShowDetailActivity extends Activity
             else {  
                 Toast.makeText(getApplication(), getApplication().getString(R.string.thread_started), Toast.LENGTH_LONG).show();  
             }  
-        	buttonPlayStop.setEnabled(false);
-        	seekBar.setEnabled(false);        	
+      	
         } 
         else
         {
        	     TextView detail= (TextView) findViewById(R.id.detail);
+       	     detail.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, this.getPreferredTextSize());
              detail.setText(rssItem.getFullText());
              if(rssItem.getStatus()<RssItem.E_DOWN_MP3_OK)
              {
@@ -89,12 +93,29 @@ public class ShowDetailActivity extends Activity
     }
     
     
+    void showPlayControl(boolean isShow)
+    {
+    	View playView = findViewById(R.id.audio_play_control);
+    	if (isShow)
+    	{
+    		playView.setVisibility(View.VISIBLE);
+        	buttonPlayStop.setEnabled(true);
+        	seekBar.setEnabled(true);  
+    	}
+    	else
+    	{
+    		playView.setVisibility(View.INVISIBLE);    		
+        	buttonPlayStop.setEnabled(false);
+        	seekBar.setEnabled(false);  
+    	}
+    	
+    }
+    
     private void initMp3Player() {   
         if(null==rssItem.getLocalmp3())
         {
         	Log.i(tag, "localmp3 is null");
-        	buttonPlayStop.setEnabled(false);
-        	seekBar.setEnabled(false);
+            this.showPlayControl(false);
         	return; 
         }    	
     	
@@ -102,8 +123,7 @@ public class ShowDetailActivity extends Activity
     		mediaPlayer = new MediaPlayer();
 			mediaPlayer.setDataSource(rssItem.getLocalmp3());
 			mediaPlayer.prepare();
-			buttonPlayStop.setEnabled(true);
-			seekBar.setEnabled(true);
+			this.showPlayControl(true);
         	buttonPlayStop.setOnClickListener(new OnClickListener() {@Override public void onClick(View v) {buttonClick();}});
         	seekBar.setMax(mediaPlayer.getDuration());
         	seekBar.setOnTouchListener(new OnTouchListener() {@Override public boolean onTouch(View v, MotionEvent event) {
@@ -112,16 +132,13 @@ public class ShowDetailActivity extends Activity
                 	});
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-        	buttonPlayStop.setEnabled(false);
-        	seekBar.setEnabled(false);
+			this.showPlayControl(false);
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
-        	buttonPlayStop.setEnabled(false);
-        	seekBar.setEnabled(false);
+			this.showPlayControl(false);
 		} catch (IOException e) {
 			e.printStackTrace();
-        	buttonPlayStop.setEnabled(false);
-        	seekBar.setEnabled(false);
+			this.showPlayControl(false);
 		}
     }
     
@@ -177,6 +194,7 @@ public class ShowDetailActivity extends Activity
                 //reload date from db
             	Log.i(tag, "Parse rssItem SUCCESS");
             	TextView detail= (TextView) findViewById(R.id.detail);
+            	detail.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, ShowDetailActivity.this.getPreferredTextSize());
                 detail.setText(rssItem.getFullText()); 
                 DbRssItem.updateItem(rssItem);                 
                 
@@ -196,7 +214,8 @@ public class ShowDetailActivity extends Activity
                 break;  
              
             case MSG_MP3:
-            	DbRssItem.updateItem(rssItem); 
+            	int updatedmp3=DbRssItem.updateItem(rssItem); 
+            	Log.i(tag, "updatedmp3=%d"+updatedmp3);
                 if(rssItem.getStatus()==RssItem.E_DOWN_MP3_OK)
                 {
                 	Toast.makeText(getApplication(), getApplication().getString(R.string.get_mp3_success), Toast.LENGTH_LONG).show(); 
@@ -229,6 +248,14 @@ public class ShowDetailActivity extends Activity
     	return flag;
 	}
 	
+	
+	public float getPreferredTextSize()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);    	
+    	String textSizeStr= prefs.getString("pref_detail_text_size", "20");
+    	return Float.valueOf(textSizeStr);
+	}
+	
     
      Runnable runnable = new Runnable() {  
         
@@ -257,15 +284,43 @@ public class ShowDetailActivity extends Activity
     }; 
     
     @Override  
+    protected void onStart() {  
+        super.onStart();  
+        Log.v(tag, "onStart");  
+    } 
+    
+    @Override  
     protected void onResume() {  
         super.onResume();  
-        Log.e(tag, "start onResume~~~");  
+        if(is_playing_when_pause && null!=mediaPlayer)
+        {
+            mediaPlayer.start();	
+            is_playing_when_pause = false;
+        }
+        
+        Log.e(tag, "onResume");  
     }  
       
     @Override  
-    protected void onPause() {  
+    protected void onPause() {
+    	if(mediaPlayer!=null && mediaPlayer.isPlaying())
+    	{
+    		mediaPlayer.pause();
+    		is_playing_when_pause = true;
+    	}    	
+    	
         super.onPause();  
-        Log.e(tag, "start onPause~~~");  
+        Log.e(tag, "onPause");  
     }  
-      
+ 
+    @Override  
+    protected void onStop() {  
+        super.onStop();  
+        Log.v(tag, "onStop");  
+    }  
+    @Override  
+    protected void onDestroy() {  
+        super.onDestroy();  
+        Log.v(tag, "onDestroy");  
+    }  
 }

@@ -84,7 +84,7 @@ public class NetworkUtil {
     		int downloadedSize = 0;
 
     		//create a buffer...
-    		byte[] buffer = new byte[2048];
+    		byte[] buffer = new byte[1<<14];
     		int bufferLength = 0; //used to store a temporary size of the buffer
 
     		//now, read through the input buffer and write the contents to the file
@@ -93,9 +93,10 @@ public class NetworkUtil {
     			fileOutput.write(buffer, 0, bufferLength);
     			//add up the size so we know how much is downloaded
     			downloadedSize += bufferLength;
-    			Log.i(tag, "download "+downloadedSize+" of "+totalSize);
+    			//Log.i(tag, "download "+downloadedSize+" of "+totalSize);
 
     		}
+    		Log.i(tag, "download "+downloadedSize+" of "+totalSize);
     		//close the output stream when done
     		fileOutput.close();
     		rssItem.setLocalmp3(mp3FilePath);

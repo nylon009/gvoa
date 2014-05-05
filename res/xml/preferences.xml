@@ -35,6 +35,15 @@
                 android:entryValues="@array/entries_list_remove_mp3_days"
                 android:dialogTitle="@string/remove_mp3_x_days_before" 
                 android:defaultValue = "7"/>
+         
+         <ListPreference
+                android:key="pref_detail_text_size"
+                android:title="@string/detail_text_size"
+                android:summary="@string/detail_text_size_summary"
+                android:entries="@array/entries_detail_text_size_value"
+                android:entryValues="@array/entries_detail_text_size_value"
+                android:dialogTitle="@string/detail_text_size" 
+                android:defaultValue = "20" />
             
     </PreferenceCategory>                
   

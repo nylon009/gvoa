@@ -2,7 +2,7 @@
 
 
 <RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/widget31"
+        android:id="@+id/audio_play_control"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >

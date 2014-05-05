@@ -17,5 +17,8 @@
     <string name="remove_mp3_x_days_before">Remove old mp3 before days</string>
     <string name="remove_mp3_x_days_before_summary">Old mp3 will be deleted to save the disk space</string>
     
+    <string name="detail_text_size">Text size</string>
+    <string name="detail_text_size_summary">Text size of RSS content</string>
+    
     
 </resources>
