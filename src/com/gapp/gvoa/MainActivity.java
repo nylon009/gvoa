@@ -10,6 +10,7 @@ import android.widget.TabHost.TabSpec;
 import com.gapp.gvoa.db.GRSSDbHandler;
 import com.gapp.gvoa.ui.GVOASettings;
 import com.gapp.gvoa.ui.RssFeedListActivity;
+import com.gapp.gvoa.util.GPreference;
 
 public class MainActivity extends TabActivity {
 
@@ -17,10 +18,10 @@ public class MainActivity extends TabActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);       
         
-        setTitle(R.string.app_name);
+        this.globalInit();
         
-        //init database
-        GRSSDbHandler.initInstance(this.getBaseContext());
+        setTitle(R.string.app_name);
+                
         
         setContentView(R.layout.main_tab);
         
@@ -42,6 +43,15 @@ public class MainActivity extends TabActivity {
         
         tabHost.setCurrentTab(0);
     }
+    
+    public void globalInit()
+    {
+    	//init database
+        GRSSDbHandler.initInstance(this.getBaseContext());
+        
+        GPreference.init(this);
+    }
+    
 
 
 }

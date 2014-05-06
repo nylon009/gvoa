@@ -3,21 +3,15 @@ package com.gapp.gvoa.ui;
 import java.io.IOException;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.media.MediaPlayer;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -27,6 +21,7 @@ import com.gapp.gvoa.R;
 import com.gapp.gvoa.datatype.RssItem;
 import com.gapp.gvoa.db.DbRssItem;
 import com.gapp.gvoa.parser.ItemHtmlParser;
+import com.gapp.gvoa.util.GPreference;
 import com.gapp.gvoa.util.NetworkUtil;
 
 public class ShowDetailActivity extends Activity 
@@ -78,11 +73,11 @@ public class ShowDetailActivity extends Activity
         else
         {
        	     TextView detail= (TextView) findViewById(R.id.detail);
-       	     detail.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, this.getPreferredTextSize());
+       	     detail.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, GPreference.getPreferredTextSize());
              detail.setText(rssItem.getFullText());
              if(rssItem.getStatus()<RssItem.E_DOWN_MP3_OK)
              {
-                 if(isWiFi() &&isAutoDownloadMp3()){
+                 if(GPreference.isWiFi() &&GPreference.isAutoDownloadMp3()){
                  	
                      mThread = new Thread(runnableMp3);  
                      mThread.start();
@@ -194,12 +189,12 @@ public class ShowDetailActivity extends Activity
                 //reload date from db
             	Log.i(tag, "Parse rssItem SUCCESS");
             	TextView detail= (TextView) findViewById(R.id.detail);
-            	detail.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, ShowDetailActivity.this.getPreferredTextSize());
+            	detail.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, GPreference.getPreferredTextSize());
                 detail.setText(rssItem.getFullText()); 
                 DbRssItem.updateItem(rssItem);                 
                 
                 //TODO: go on download mp3 according to settings   
-                if(isWiFi() &&isAutoDownloadMp3()){
+                if(GPreference.isWiFi() &&GPreference.isAutoDownloadMp3()){
                 	
                     mThread = new Thread(runnableMp3);  
                     mThread.start();
@@ -232,29 +227,7 @@ public class ShowDetailActivity extends Activity
     };    
     
     
-	public boolean isWiFi(){
-		ConnectivityManager connectMgr = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-			NetworkInfo info = connectMgr.getActiveNetworkInfo();
-			if(info !=null && info.getType() ==  ConnectivityManager.TYPE_WIFI){
-				return true;
-			}
-			return false;
-	}
-	
-	public boolean isAutoDownloadMp3()
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);    	
-    	boolean flag = prefs.getBoolean("pref_autodownload_mp3", false);
-    	return flag;
-	}
-	
-	
-	public float getPreferredTextSize()
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);    	
-    	String textSizeStr= prefs.getString("pref_detail_text_size", "20");
-    	return Float.valueOf(textSizeStr);
-	}
+
 	
     
      Runnable runnable = new Runnable() {  

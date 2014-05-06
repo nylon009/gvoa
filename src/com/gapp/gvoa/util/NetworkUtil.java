@@ -1,9 +1,11 @@
 package com.gapp.gvoa.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -113,6 +115,28 @@ public class NetworkUtil {
     }
 	
 
+    
+    public static String httpGetContent(String urlstr) throws  Exception
+    {
+    	String retStr = null;
+ 		
+		URL url = new URL(urlstr);
+		HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+		urlConnection.setRequestMethod("GET");
+    	urlConnection.connect();
+    		
+ 
+        InputStreamReader in = new InputStreamReader(urlConnection.getInputStream());  
+        BufferedReader buffer = new BufferedReader(in);  
+        String inputLine = null;  
+        while (((inputLine = buffer.readLine()) != null))  
+        {  
+        	retStr += inputLine + "\n";  
+        }    		
+
+    	
+    	return retStr;
+    }
 	
 	
 }

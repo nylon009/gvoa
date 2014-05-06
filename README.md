@@ -1,15 +1,21 @@
 gvoa
 ====
 
-For learning english, I tried many VOA related applications, but none of them is easy to use. So I decided to write one for myself.  The UI will be very simple, but the content will be very useful. 
+GVOA is a RSS reader client for VOA.  But unlike other counter parters which just open the url to show the contnet in the webpage, it parses the html page and save the content locally. 
 
+For learning english, I tried many VOA related applications, but none of them is can meet my requirement. So I decided to write one for myself.  The UI may be very simple, but the features will be very useful. 
 
-GVOA is a RSS reader for VOA.  
 
 Feature List:
-1) Support off-line reader by local db;
-2) Support mp3 player;
-3) Support multithread download(in furure);
+1. Parse the html page and save the text and mp3 locally;
+2. Support offline mode even when the mobile is not connect to internet;
+2. Play/Pause mp3 locally;
+3. User can adjust font of the RSS text;
+
+
+
+TODO:
+4. Auto clear old/expired text and mp3;
 
 
 Thanks for the RSS service provided by http://51voa.com
