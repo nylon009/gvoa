@@ -1,6 +1,11 @@
 package com.gapp.gvoa.db;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -8,11 +13,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDoneException;
 import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
 
 import com.gapp.gvoa.datatype.RssItem;
 
 public class DbRssItem {
 
+	public static final String tag = "DbRssItem";
+	
     // Contacts table name
     public static final String TABLE_RSSITEM = "trssitem";
  
@@ -47,7 +55,7 @@ public class DbRssItem {
      * creates a new row
      * */
     public static void addRssItem(RssItem item) {
-    	//Log.i("GVOA", "addRssItem "+item); 
+    	Log.i(tag, "addRssItem: feedID="+item.getFeedID() +", title="+item.getTitle()); 
         SQLiteDatabase db = GRSSDbHandler.getInstance().getWritableDatabase();
  
         ContentValues values = new ContentValues();
@@ -62,24 +70,31 @@ public class DbRssItem {
         values.put(KEY_STATUS,item.getStatus());
         // Check if row already existed in database
         if (!isItemExists(db, item.getLink())) {
-            // site not existed, create a new row
-            db.insert(TABLE_RSSITEM, null, values);
+            // site not existed, create a new row        	
+            long result =db.insert(TABLE_RSSITEM, null, values);
+            Log.i(tag, "addRssItem to db result "+ result);
         } else {
             // site already existed update the row
-            updateItem(item);
+            int result = updateItem(item);
+            Log.i(tag, "update RssItem to db result "+ result);
         }
        //db.close();
     }
  
     /**
-     * Reading all rows from database
+     * Reading all rows from database,
+     *   if feedid=-1, means query all the feeds
+     *   if feedid>0, means query special feed
      * */
     public static List<RssItem> getAllItems(Integer feedid) {
         List<RssItem> itemList = new ArrayList<RssItem>();
-        // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_RSSITEM
-                + " where "+ KEY_FEED_ID + "=" + feedid + " ORDER BY id DESC";
- 
+        
+        String selectQuery = "SELECT  * FROM " + TABLE_RSSITEM; 
+        if(feedid>0)
+        {
+            selectQuery =  selectQuery + " where "+ KEY_FEED_ID + "=" + feedid;
+        }
+        Log.i(tag, selectQuery);
         SQLiteDatabase db = GRSSDbHandler.getInstance().getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
  
@@ -100,6 +115,27 @@ public class DbRssItem {
             } while (cursor.moveToNext());
         }
         cursor.close();
+        Collections.sort(itemList,new Comparator<RssItem>(){  
+            @Override  
+            public int compare(RssItem b1, RssItem b2) { 
+            
+            	SimpleDateFormat fmt =new SimpleDateFormat("yyyy-MM-dd");
+            	try {
+					Date date1 = fmt.parse(b1.getPubDate());
+					Date date2 = fmt.parse(b2.getPubDate());
+					return date1.compareTo(date2);
+					
+				} catch (ParseException e) {
+
+					e.printStackTrace();
+				}            	
+            	return b1.getPubDate().compareTo(b2.getPubDate());  
+            }  
+              
+        });    
+        
+        
+        Collections.reverse(itemList);
         return itemList;
     }
  

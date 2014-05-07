@@ -42,4 +42,11 @@ public class GPreference {
 	}
 	
 
+	public static int getPreferredExpireDays()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainActivity);    	
+    	String expireStr= prefs.getString("pref_remove_mp3_x_days_before", "7");
+    	return Integer.valueOf(expireStr);
+	}
+	
 }

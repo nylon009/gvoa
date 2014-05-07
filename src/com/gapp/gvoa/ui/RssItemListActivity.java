@@ -13,7 +13,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -27,9 +26,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gapp.gvoa.R;
@@ -56,6 +55,9 @@ public class RssItemListActivity extends  Activity implements OnItemClickListene
         setContentView(R.layout.rss_item_list);
      
         rssFeed = getIntent().getParcelableExtra(RssFeed.class.getName()); 
+        
+        TextView titleView =(TextView) findViewById(R.id.rss_list_title);
+        titleView.setText(rssFeed.getTitle());
         
         //get item from db
         rssItemList = DbRssItem.getAllItems(rssFeed.getId());

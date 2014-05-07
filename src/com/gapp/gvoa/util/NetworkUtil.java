@@ -14,20 +14,13 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.gapp.gvoa.datatype.RssItem;
+import com.gapp.gvoa.db.DbRssItem;
 
 public class NetworkUtil {
 
 	public static final String tag = "NetworkUtil";
 	
-	public static boolean isFileExists(String filePath)
-	{
-		File file = new File(filePath);
-		if(file.exists())
-		{
-			 return true;
-		}		    
-		return false;
-	}
+
 	
 	private static String getLocalMp3Path(String url)
 	{
@@ -46,7 +39,7 @@ public class NetworkUtil {
 		
 		
 		//file already downloaded,no need download again
-		if (rssItem.getLocalmp3()!=null && isFileExists(rssItem.getLocalmp3()))
+		if (rssItem.getLocalmp3()!=null && GvoaUtil.isFileExists(rssItem.getLocalmp3()))
 		{
 			Log.i(tag, "mp3 is already downloaded");
 			return;
@@ -103,6 +96,8 @@ public class NetworkUtil {
     		fileOutput.close();
     		rssItem.setLocalmp3(mp3FilePath);
     		rssItem.setStatus(RssItem.E_DOWN_MP3_OK);
+        	int updatedmp3=DbRssItem.updateItem(rssItem); 
+        	Log.i(tag, "updatedmp3=%d"+updatedmp3);
     	//catch some possible errors...
     	} catch (MalformedURLException e) {
     		rssItem.setStatus(RssItem.E_DOWN_MP3_FAIL);
@@ -111,7 +106,6 @@ public class NetworkUtil {
     		rssItem.setStatus(RssItem.E_DOWN_MP3_FAIL);
     		e.printStackTrace();
     	}
-    	// see http://androidsnippets.com/download-an-http-file-to-sdcard-with-progress-notification
     }
 	
 

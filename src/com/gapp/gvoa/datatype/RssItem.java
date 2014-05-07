@@ -99,7 +99,7 @@ public class RssItem implements Parcelable {
 	public String getPubDate() {
 		return pubDate;
 	}
-	public void setPubDate(String sdate) {
+	public void setPubDate(String sdate) {		
 		this.pubDate = sdate;
 	}
 	public Integer getFeedID() {
@@ -162,6 +162,7 @@ public class RssItem implements Parcelable {
 		dest.writeString(localmp3);
 		dest.writeInt(status);
 	}
+
 
 	
 	

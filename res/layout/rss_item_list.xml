@@ -9,16 +9,8 @@
              android:layout_height="36dp"
              android:background="@android:color/darker_gray" >
              
-     <ImageButton android:id="@+id/a"
-        android:layout_width="36dp"
-        android:src="@drawable/ic_menu_back"
-        android:layout_alignParentLeft="true"  
-        android:layout_height="wrap_content"   
-        android:layout_marginTop="2dp"
-                  
-        />
      
-        <TextView android:id="@+id/text"
+        <TextView android:id="@+id/rss_list_title"
               android:layout_width="wrap_content"
               android:text="@string/rss_site" 
               android:layout_centerInParent="true"

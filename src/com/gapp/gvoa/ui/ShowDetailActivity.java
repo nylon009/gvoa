@@ -209,8 +209,7 @@ public class ShowDetailActivity extends Activity
                 break;  
              
             case MSG_MP3:
-            	int updatedmp3=DbRssItem.updateItem(rssItem); 
-            	Log.i(tag, "updatedmp3=%d"+updatedmp3);
+
                 if(rssItem.getStatus()==RssItem.E_DOWN_MP3_OK)
                 {
                 	Toast.makeText(getApplication(), getApplication().getString(R.string.get_mp3_success), Toast.LENGTH_LONG).show(); 
