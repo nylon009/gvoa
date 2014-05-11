@@ -8,11 +8,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,15 +30,25 @@ import com.gapp.gvoa.util.NetworkUtil;
 
 public class ShowDetailActivity extends Activity 
 {
-	public final String tag = "ShowDetailActivity";
-	private static final int MSG_SUCCESS = 0;
-    private static final int MSG_FAILURE = 1;
-    private static final int MSG_MP3 = 2;
+	private final String tag = "ShowDetailActivity";
+	public static final int MSG_SUCCESS = 0;
+	public static final int MSG_FAILURE = 1;
+	public static final int MSG_MP3_PROGRESS = 2;
+	public static final int MSG_MP3 = 3;
+	
+	
+	private static final int EXTRA_SHOW_NONE=0;
+	private static final int EXTRA_SHOW_DOWNLOADING=1;
+	private static final int EXTRA_SHOW_PLAYCONTROL=2;
     
+	private RelativeLayout mPlayView=null; 
+	private View mDownloadView=null;
+	
     private ImageButton buttonPlayStop; 
     private SeekBar seekBar;
+    private ProgressBar mProgressBar;
+    
     private MediaPlayer mediaPlayer=null;
-    private boolean is_playing_when_pause;
     
     
 	private RssItem rssItem; 
@@ -47,19 +61,15 @@ public class ShowDetailActivity extends Activity
         
         
         setContentView(R.layout.rss_detail);
-    	buttonPlayStop = (ImageButton) findViewById(R.id.play_pause);
-    	seekBar = (SeekBar) findViewById(R.id.SeekBar01);  
+
     	
         rssItem = getIntent().getParcelableExtra(RssItem.class.getName()); 
         Log.i(tag, "load rssitem url="+rssItem.getLink());
         
         TextView title= (TextView) findViewById(R.id.title);
-        title.setText(rssItem.getTitle());  
+        title.setText(rssItem.getTitle());          
         
-        
-        
-        
-        if(rssItem.getStatus()<RssItem.E_PARSE_TXT_OK || null==rssItem.getMp3url())
+        if(rssItem.getStatus()<RssItem.E_PARSE_TXT_OK)
         {
         	if(mThread == null) {  
                 mThread = new Thread(runnable);  
@@ -77,48 +87,75 @@ public class ShowDetailActivity extends Activity
              detail.setText(rssItem.getFullText());
              if(rssItem.getStatus()<RssItem.E_DOWN_MP3_OK)
              {
-                 if(GPreference.isWiFi() &&GPreference.isAutoDownloadMp3()){
+            	 if(null==rssItem.getMp3url())
+            	 {
+            		 Toast.makeText(getApplication(), getApplication().getString(R.string.no_mp3_content), Toast.LENGTH_LONG).show(); 
+            	 }else if(GPreference.isWiFi() &&GPreference.isAutoDownloadMp3()){
                  	
                      mThread = new Thread(runnableMp3);  
                      mThread.start();
                  }
              }
-        }   
-        initMp3Player();
-    }
-    
-    
-    void showPlayControl(boolean isShow)
-    {
-    	View playView = findViewById(R.id.audio_play_control);
-    	if (isShow)
-    	{
-    		playView.setVisibility(View.VISIBLE);
-        	buttonPlayStop.setEnabled(true);
-        	seekBar.setEnabled(true);  
-    	}
-    	else
-    	{
-    		playView.setVisibility(View.INVISIBLE);    		
-        	buttonPlayStop.setEnabled(false);
-        	seekBar.setEnabled(false);  
-    	}
-    	
-    }
-    
-    private void initMp3Player() {   
-        if(null==rssItem.getLocalmp3())
+        } 
+        
+        if(null==rssItem.getMp3url())
+        {
+        	showExtra(EXTRA_SHOW_NONE);
+        }
+        else if(null==rssItem.getLocalmp3())
         {
         	Log.i(tag, "localmp3 is null");
-            this.showPlayControl(false);
-        	return; 
-        }    	
+        	showExtra(EXTRA_SHOW_DOWNLOADING);
+        }
+        else
+        {
+        	showExtra(EXTRA_SHOW_PLAYCONTROL);
+            initMp3Player();
+        }
+    }
+    
+    
+    void showExtra(int showType)
+    {    	
+    	LinearLayout detail_linear_layout_view = (LinearLayout) findViewById(R.id.detail_linear_layout); 
+    	switch( showType)
+    	{
+    		case EXTRA_SHOW_NONE:
+    			break;
+    		case EXTRA_SHOW_DOWNLOADING:
+        		if(null!=mPlayView)
+        		{
+        		    detail_linear_layout_view.removeView(mPlayView);
+        		    mPlayView.setVisibility(View.GONE);
+        		}
+        		mDownloadView = (View) LayoutInflater.from(this).inflate(R.layout.download_mp3, null);     	
+            	detail_linear_layout_view.addView(mDownloadView);
+            	mProgressBar = (ProgressBar)  findViewById(R.id.downprogressloadbar); 
+    			break;
+    		case EXTRA_SHOW_PLAYCONTROL:           	
+            	if(null!=mDownloadView)
+            	{
+        		    Log.i(tag,"remove mDownloadView");
+            		detail_linear_layout_view.removeView(mDownloadView);
+        		    mDownloadView.setVisibility(View.GONE);
+            	}
+        		mPlayView =(RelativeLayout) LayoutInflater.from(this).inflate(R.layout.audio_play, null);      		       	
+            	detail_linear_layout_view.addView(mPlayView);
+            	buttonPlayStop = (ImageButton) findViewById(R.id.play_pause);
+            	seekBar = (SeekBar) findViewById(R.id.SeekBar01);  
+    			break;
+    			
+    	}
+  	
+    }
+    
+    private void initMp3Player() {  	
     	
     	try {
+
     		mediaPlayer = new MediaPlayer();
 			mediaPlayer.setDataSource(rssItem.getLocalmp3());
 			mediaPlayer.prepare();
-			this.showPlayControl(true);
         	buttonPlayStop.setOnClickListener(new OnClickListener() {@Override public void onClick(View v) {buttonClick();}});
         	seekBar.setMax(mediaPlayer.getDuration());
         	seekBar.setOnTouchListener(new OnTouchListener() {@Override public boolean onTouch(View v, MotionEvent event) {
@@ -127,13 +164,11 @@ public class ShowDetailActivity extends Activity
                 	});
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
-			this.showPlayControl(false);
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
-			this.showPlayControl(false);
 		} catch (IOException e) {
 			e.printStackTrace();
-			this.showPlayControl(false);
+
 		}
     }
     
@@ -193,11 +228,19 @@ public class ShowDetailActivity extends Activity
                 detail.setText(rssItem.getFullText()); 
                 DbRssItem.updateItem(rssItem);                 
                 
-                //TODO: go on download mp3 according to settings   
+                if(null!=rssItem.getMp3url())
+                {
+                	showExtra(EXTRA_SHOW_DOWNLOADING);
+                }                
+                
                 if(GPreference.isWiFi() &&GPreference.isAutoDownloadMp3()){
                 	
                     mThread = new Thread(runnableMp3);  
                     mThread.start();
+                }
+                else
+                {
+                	Log.i(tag, "Don't download mp3");
                 }
                 
             	
@@ -208,11 +251,23 @@ public class ShowDetailActivity extends Activity
                 mThread = null;
                 break;  
              
+                
+            case MSG_MP3_PROGRESS:
+    			Integer  downloadedSize =msg.arg1;
+    			Integer  totalSize =msg.arg2;
+    			RssItem item = (RssItem) msg.obj;
+    		    if(item == rssItem  && null!=mProgressBar)
+    		    {
+    		    	mProgressBar.setProgress(downloadedSize*100/totalSize);
+    		    }           	
+            	
+            	break;
             case MSG_MP3:
 
                 if(rssItem.getStatus()==RssItem.E_DOWN_MP3_OK)
                 {
-                	Toast.makeText(getApplication(), getApplication().getString(R.string.get_mp3_success), Toast.LENGTH_LONG).show(); 
+                	Toast.makeText(getApplication(), getApplication().getString(R.string.get_mp3_success), Toast.LENGTH_LONG).show();
+                   	showExtra(EXTRA_SHOW_PLAYCONTROL);               	
                 	initMp3Player();
                 }
                 else
@@ -250,49 +305,43 @@ public class ShowDetailActivity extends Activity
         @Override  
         public void run() {   
         	Log.i(tag, "Start download mp3");
-            NetworkUtil.downloadMp3 (rssItem);
-            mHandler.obtainMessage(MSG_MP3).sendToTarget();
+            NetworkUtil.downloadMp3 (rssItem, mHandler);
+            
         }  
     }; 
     
     @Override  
     protected void onStart() {  
         super.onStart();  
-        Log.v(tag, "onStart");  
+        Log.i(tag, "onStart");  
     } 
     
     @Override  
     protected void onResume() {  
         super.onResume();  
-        if(is_playing_when_pause && null!=mediaPlayer)
-        {
-            mediaPlayer.start();	
-            is_playing_when_pause = false;
-        }
         
-        Log.e(tag, "onResume");  
+        Log.i(tag, "onResume");  
     }  
       
     @Override  
-    protected void onPause() {
-    	if(mediaPlayer!=null && mediaPlayer.isPlaying())
-    	{
-    		mediaPlayer.pause();
-    		is_playing_when_pause = true;
-    	}    	
+    protected void onPause() {  	
     	
         super.onPause();  
-        Log.e(tag, "onPause");  
+        Log.i(tag, "onPause");  
     }  
  
     @Override  
-    protected void onStop() {  
+    protected void onStop() {      	
         super.onStop();  
-        Log.v(tag, "onStop");  
+        Log.i(tag, "onStop");  
     }  
     @Override  
     protected void onDestroy() {  
+    	if(mediaPlayer!=null && mediaPlayer.isPlaying())
+    	{
+    		mediaPlayer.stop();
+    	} 
         super.onDestroy();  
-        Log.v(tag, "onDestroy");  
+        Log.i(tag, "onDestroy");  
     }  
 }

@@ -1,9 +1,13 @@
 package com.gapp.gvoa.datatype;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class RssItem implements Parcelable {
+public class RssItem implements Parcelable,Comparable<RssItem> {
 	
 	public static Integer  E_INIT=0;
 	public static Integer  E_DOWN_TXT_OK=1;
@@ -161,6 +165,25 @@ public class RssItem implements Parcelable {
 		dest.writeString(mp3url);
 		dest.writeString(localmp3);
 		dest.writeInt(status);
+	}
+
+	@Override
+	public int compareTo(RssItem another) {
+		if(this.id==another.id
+			||this.link==another.link)
+		{
+			return 0;
+		}
+		
+    	SimpleDateFormat fmt =new SimpleDateFormat("yyyy-MM-dd");
+    	try {
+			Date date1 = fmt.parse(this.pubDate);
+			Date date2 = fmt.parse(another.pubDate);
+			return date1.compareTo(date2);			
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}            	
+    	return this.title.compareTo(another.title);  
 	}
 
 

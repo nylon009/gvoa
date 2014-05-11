@@ -8,10 +8,12 @@
     <string name="thread_started">Loading now, please wait a few seconds and try again</string>
     <string name="get_rss_failure">Get RSS Feed failed</string>
      <string name="get_mp3_failure">Get MP3 failed</string> 
-     <string name="get_mp3_success">Download MP3 sucessfully!</string>
+     <string name="get_mp3_success">Download MP3 successfully!</string>
+     <string name="no_mp3_content">No MP3 content is found on this article!</string>
     <string name="gvoa_settings">GVOA Settings</string>
     <string name="play_str">play</string>
     <string name="pause">pause</string>
+    <string name="downloading">Downloading</string>
     
     <string name="download_mp3_automatically">Download Mp3 automatically</string>
     <string name="remove_mp3_x_days_before">Remove old mp3 before days</string>

@@ -9,42 +9,24 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
-import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import com.gapp.gvoa.datatype.RssItem;
 import com.gapp.gvoa.db.DbRssItem;
+import com.gapp.gvoa.ui.ShowDetailActivity;
 
 public class NetworkUtil {
 
 	public static final String tag = "NetworkUtil";
 	
-
-	
-	private static String getLocalMp3Path(String url)
-	{
-		String md5str=MD5.getMD5(url.getBytes());
-		String sdRoot=Environment.getExternalStorageDirectory().getPath();
-		String destFile = sdRoot + "/" +"gvoa" + "/"+ md5str;
-		
-		
-		
-		return destFile; 	
-	}
-	
-	
-    public  static void downloadMp3(RssItem rssItem)
+    public  static void downloadMp3(RssItem rssItem, Handler handler)
     {
-		
-		
-		//file already downloaded,no need download again
-		if (rssItem.getLocalmp3()!=null && GvoaUtil.isFileExists(rssItem.getLocalmp3()))
-		{
-			Log.i(tag, "mp3 is already downloaded");
-			return;
-		}
-		
+    	
 		if (rssItem.getMp3url()==null)
 		{
 			Log.w(tag,"mp3url is null");
@@ -58,8 +40,8 @@ public class NetworkUtil {
     		//urlConnection.setDoOutput(true);
     		urlConnection.connect();
 
-    		String mp3FilePath = getLocalMp3Path(rssItem.getMp3url());
-    		
+    		String mp3FilePath = GvoaUtil.getLocalMp3Path(rssItem.getMp3url());
+    		Log.w(tag,"save mp3 to "+mp3FilePath);
     		File file = new File(mp3FilePath);
     		if(file.isDirectory())
     		{
@@ -89,6 +71,12 @@ public class NetworkUtil {
     			//add up the size so we know how much is downloaded
     			downloadedSize += bufferLength;
     			//Log.i(tag, "download "+downloadedSize+" of "+totalSize);
+    			
+    			Message msg = handler.obtainMessage(ShowDetailActivity.MSG_MP3_PROGRESS); 
+    			msg.arg1=downloadedSize;
+    			msg.arg2=totalSize;
+    			msg.obj=rssItem; 
+    			msg.sendToTarget();    			
 
     		}
     		Log.i(tag, "download "+downloadedSize+" of "+totalSize);
@@ -96,8 +84,9 @@ public class NetworkUtil {
     		fileOutput.close();
     		rssItem.setLocalmp3(mp3FilePath);
     		rssItem.setStatus(RssItem.E_DOWN_MP3_OK);
-        	int updatedmp3=DbRssItem.updateItem(rssItem); 
+        	int updatedmp3=DbRssItem.updateItem(rssItem);         	
         	Log.i(tag, "updatedmp3=%d"+updatedmp3);
+        	handler.obtainMessage(ShowDetailActivity.MSG_MP3).sendToTarget();
     	//catch some possible errors...
     	} catch (MalformedURLException e) {
     		rssItem.setStatus(RssItem.E_DOWN_MP3_FAIL);

@@ -5,8 +5,8 @@
         android:id="@+id/audio_play_control"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
+        android:orientation="vertical" >     
+       
        <SeekBar
            android:id="@+id/SeekBar01"
            android:layout_width="wrap_content"
