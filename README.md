@@ -8,14 +8,10 @@ For learning english, I tried many VOA related applications, but none of them is
 
 Feature List:
 1. Parse the html page and save the text and mp3 locally;
-2. Support offline mode even when the mobile is not connect to internet;
-2. Play/Pause mp3 locally;
-3. User can adjust font of the RSS text;
+1. Support offline mode even when the mobile is not connect to internet;
+1. Play/Pause mp3 locally;
+1. User can adjust font of the RSS text;
 
-
-
-TODO:
-4. Auto clear old/expired text and mp3;
 
 
 Thanks for the RSS service provided by http://51voa.com
