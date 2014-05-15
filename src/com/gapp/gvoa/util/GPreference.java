@@ -6,8 +6,11 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class GPreference {
+	
+	private final static String tag = "GPreference";
 	
 	static Activity mainActivity=null;
 	
@@ -17,20 +20,26 @@ public class GPreference {
 	}
 	
 	
-	public static boolean isWiFi(){
+	public static int getNetWork(){
+		int ret = 0XFFFF;
+		
 		ConnectivityManager connectMgr = (ConnectivityManager) mainActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
 			NetworkInfo info = connectMgr.getActiveNetworkInfo();
-			if(info !=null && info.getType() ==  ConnectivityManager.TYPE_WIFI){
-				return true;
+			
+			if(info!=null)
+			{
+				ret = info.getType();
 			}
-			return false;
+			Log.e(tag, "networkStatus="+ret);
+			return ret; 
 	}
 	
-	public static boolean isAutoDownloadMp3()
+	public static String downloadMp3Pref()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mainActivity);    	
-    	boolean flag = prefs.getBoolean("pref_autodownload_mp3", false);
-    	return flag;
+		String downLoadMp3Str = prefs.getString("pref_autodownload_mp3", "WIFI_ONLY");
+		 Log.e(tag, "downLoadMp3Str="+downLoadMp3Str);
+    	return downLoadMp3Str;
 	}
 	
 	

@@ -21,11 +21,16 @@
     <PreferenceCategory
             android:title="@string/gvoa_settings">
             
-        <CheckBoxPreference
+        
+         <ListPreference
                 android:key="pref_autodownload_mp3"
-                android:title="@string/download_mp3_automatically"
-                android:defaultValue="true"
-                />
+                android:title="@string/audio_download_pref"
+                 android:summary="@string/audio_download_pref_summary"
+                android:entries="@array/pref_autodownload_mp3_entries"
+                android:entryValues="@array/pref_autodownload_mp3_values"
+                android:dialogTitle="@string/audio_download_pref"
+                android:defaultValue = "WIFI_ONLY"/>
+        
         
          <ListPreference
                 android:key="pref_remove_mp3_x_days_before"

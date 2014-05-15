@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import android.app.Activity;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -90,11 +91,10 @@ public class ShowDetailActivity extends Activity
             	 if(null==rssItem.getMp3url())
             	 {
             		 Toast.makeText(getApplication(), getApplication().getString(R.string.no_mp3_content), Toast.LENGTH_LONG).show(); 
-            	 }else if(GPreference.isWiFi() &&GPreference.isAutoDownloadMp3()){
-                 	
-                     mThread = new Thread(runnableMp3);  
-                     mThread.start();
-                 }
+            	 }else 
+            	 {
+            		 checkAndDownMp3();
+            	 }
              }
         } 
         
@@ -233,15 +233,9 @@ public class ShowDetailActivity extends Activity
                 	showExtra(EXTRA_SHOW_DOWNLOADING);
                 }                
                 
-                if(GPreference.isWiFi() &&GPreference.isAutoDownloadMp3()){
-                	
-                    mThread = new Thread(runnableMp3);  
-                    mThread.start();
-                }
-                else
-                {
-                	Log.i(tag, "Don't download mp3");
-                }
+                checkAndDownMp3();
+                
+
                 
             	
                 break;    
@@ -282,6 +276,45 @@ public class ShowDetailActivity extends Activity
     
     
 
+    private void checkAndDownMp3()
+    {
+    	int netStatus = GPreference.getNetWork();
+    	
+    	if(0xFFFF==netStatus)
+    	{
+    		Toast.makeText(getApplication(), getApplication().getString(R.string.no_network_connected), Toast.LENGTH_LONG).show(); 
+    		return; 
+    	}
+    	
+    	//WIFI_ONLY,  WIFI_AND_3G, NONE  	
+    	String mp3Pref = GPreference.downloadMp3Pref();    	
+    	
+    	
+    	if(netStatus == ConnectivityManager.TYPE_WIFI)
+    	{
+    		if(mp3Pref.equals("WIFI_ONLY")||mp3Pref.equals("WIFI_AND_3G"))
+    		{
+                mThread = new Thread(runnableMp3);  
+                mThread.start();
+    		}
+    		else
+    		{
+    			Toast.makeText(getApplication(), getApplication().getString(R.string.audio_is_not_downloaded), Toast.LENGTH_LONG).show();
+    		}    		
+    	}
+    	else
+    	{
+    		if(mp3Pref.equals("WIFI_AND_3G"))
+    		{
+                mThread = new Thread(runnableMp3);  
+                mThread.start();
+    		}
+    		else
+    		{
+    			Toast.makeText(getApplication(), getApplication().getString(R.string.audio_is_not_downloaded), Toast.LENGTH_LONG).show();
+    		} 
+    	}
+    }
 	
     
      Runnable runnable = new Runnable() {  
@@ -291,7 +324,7 @@ public class ShowDetailActivity extends Activity
             try {
             	ItemHtmlParser.parseItemDetail(rssItem);
             } catch (Exception e) {  
-            	 Log.e("GVOA", "Connect or parse Error", e);
+            	 Log.e(tag, "Connect or parse Error", e);
             	 rssItem.setStatus(RssItem.E_PARSE_TXT_FAIL);
                 mHandler.obtainMessage(MSG_FAILURE).sendToTarget();
                 return;  
@@ -309,6 +342,10 @@ public class ShowDetailActivity extends Activity
             
         }  
     }; 
+    
+    
+    
+    
     
     @Override  
     protected void onStart() {  

@@ -32,6 +32,18 @@
         <item>90</item>  
     </string-array>
     
+    <string-array name="pref_autodownload_mp3_entries">
+        <item>WIFI only</item>
+        <item>WIFI and 3G</item>
+        <item>Never</item>
+    </string-array>
+    
+    
+    <string-array name="pref_autodownload_mp3_values">
+        <item>WIFI_ONLY</item>
+        <item>WIFI_AND_3G</item>
+        <item>NONE</item>
+    </string-array>
 
     <string-array name="entries_detail_text_size_value">
         <item>16</item>
