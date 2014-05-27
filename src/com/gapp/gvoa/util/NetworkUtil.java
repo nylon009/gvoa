@@ -85,8 +85,16 @@ public class NetworkUtil {
     		rssItem.setLocalmp3(mp3FilePath);
     		rssItem.setStatus(RssItem.E_DOWN_MP3_OK);
         	int updatedmp3=DbRssItem.updateItem(rssItem);         	
-        	Log.i(tag, "updatedmp3=%d"+updatedmp3);
-        	handler.obtainMessage(ShowDetailActivity.MSG_MP3).sendToTarget();
+        	Log.i(tag, "updatedmp3="+updatedmp3);
+        	
+        	//handler.obtainMessage(ShowDetailActivity.MSG_MP3).sendToTarget();
+        	Message audioOKMsg= Message.obtain();
+        	audioOKMsg.what=ShowDetailActivity.MSG_MP3;  
+        	audioOKMsg.obj=rssItem;
+        	MsgCenter.instance().postMessage(audioOKMsg);
+        	
+        	
+
     	//catch some possible errors...
     	} catch (MalformedURLException e) {
     		rssItem.setStatus(RssItem.E_DOWN_MP3_FAIL);

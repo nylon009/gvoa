@@ -13,7 +13,7 @@ import android.widget.ListView;
 import com.gapp.gvoa.datatype.RssFeed;
 import com.gapp.gvoa.db.DbRssFeed;
 
-public class RssFeedListActivity extends ListActivity {
+public class RssFeedListActivity extends ListActivity{
 
 	public final String tag = "RssListActivity";
     private List<RssFeed> rssFeedList = null;
@@ -42,4 +42,7 @@ public class RssFeedListActivity extends ListActivity {
 		itemintent.putExtras(bundle);
         startActivity(itemintent);		
 	}
+	
+
+
 }

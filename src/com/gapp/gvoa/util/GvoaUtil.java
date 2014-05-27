@@ -20,9 +20,14 @@ public class GvoaUtil {
 	{
 		String md5str=MD5.getMD5(url.getBytes());
 		String sdRoot=Environment.getExternalStorageDirectory().getPath();
-		String destFile = sdRoot + "/" +"gvoa" + "/"+ md5str +".mp3";
 		
 		
+		File gvoaFile = new File(sdRoot + "/" +"gvoa");
+		if(!gvoaFile.exists()){
+			gvoaFile.mkdir(); 
+		}	
+		
+		String destFile = sdRoot + "/" +"gvoa" + "/"+ md5str +".mp3";	
 		
 		return destFile; 	
 	}

@@ -3,6 +3,7 @@ package com.gapp.gvoa.ui;
 import java.util.List;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,7 @@ import com.gapp.gvoa.R;
 import com.gapp.gvoa.datatype.RssItem;
 
 public class ItemListAdapter extends ArrayAdapter<RssItem> {
-	
+	public static final String TAG = "ItemListAdapter";
 	private final Context context;
 	private final List<RssItem> rssItemList; 
 	
@@ -29,9 +30,15 @@ public class ItemListAdapter extends ArrayAdapter<RssItem> {
 	
 	  @Override
 	  public View getView(int position, View convertView, ViewGroup parent) {
+		  
+		Log.i(TAG, ""+rssItemList.get(position)) ;
 	    LayoutInflater inflater = (LayoutInflater) context
 	        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	    View rowView = inflater.inflate(R.layout.rss_item_row, parent, false);
+	    
+	    View rowView=convertView;
+	    if (null==rowView){
+	        rowView = inflater.inflate(R.layout.rss_item_row, parent, false);
+	    }
 	    TextView textView = (TextView) rowView.findViewById(R.id.label);
 	    ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
 	    

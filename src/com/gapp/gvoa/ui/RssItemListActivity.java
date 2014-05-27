@@ -3,6 +3,7 @@ package com.gapp.gvoa.ui;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.SAXParser;
@@ -36,12 +37,14 @@ import com.gapp.gvoa.datatype.RssFeed;
 import com.gapp.gvoa.datatype.RssItem;
 import com.gapp.gvoa.db.DbRssItem;
 import com.gapp.gvoa.parser.FeedParser;
+import com.gapp.gvoa.util.MsgCenter;
+import com.gapp.gvoa.util.MsgCenter.GSubscriber;
 
-public class RssItemListActivity extends  Activity implements OnItemClickListener {
+public class RssItemListActivity extends  Activity implements OnItemClickListener, GSubscriber {
     private static final int MSG_SUCCESS = 0;
     private static final int MSG_FAILURE = 1;
     
-	public final String tag = "RssItemListActivity";
+	public final String TAG = "RssItemListActivity";
     private List<RssItem> rssItemList = null;
     
     private RssFeed  rssFeed = null;    
@@ -51,6 +54,9 @@ public class RssItemListActivity extends  Activity implements OnItemClickListene
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);            
+        
+        MsgCenter.instance().register(this);
+        
         
         setContentView(R.layout.rss_item_list);
      
@@ -87,7 +93,7 @@ public class RssItemListActivity extends  Activity implements OnItemClickListene
             switch(msg.what) {  
             case MSG_SUCCESS:  
                 //reload date from db
-            	Log.i(tag, "Reload rss from db now");
+            	Log.i(TAG, "Reload rss from db now");
             	 rssItemList = DbRssItem.getAllItems(rssFeed.getId());
             	 refreshList();            	
             	mThread = null;
@@ -102,7 +108,7 @@ public class RssItemListActivity extends  Activity implements OnItemClickListene
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {		
-		Log.i(tag, "item clicked! [" + rssItemList.get(arg2).getTitle()
+		Log.i(TAG, "item clicked! [" + rssItemList.get(arg2).getTitle()
 				+ "]");
 		//get the content from feed and parse the content
 		RssItem rssItem = rssItemList.get(arg2);
@@ -122,7 +128,7 @@ public class RssItemListActivity extends  Activity implements OnItemClickListene
 		imageButton.setOnClickListener(new OnClickListener() { 
 			@Override
 			public void onClick(View arg0) { 
-			  Log.i(tag, "refresh clicked"); 
+			  Log.i(TAG, "refresh clicked"); 
               if(mThread == null) {  
                   mThread = new Thread(runnable);  
                   mThread.start();
@@ -161,7 +167,7 @@ public class RssItemListActivity extends  Activity implements OnItemClickListene
                         is.setEncoding("UTF-8");                       
                         xmlreader.parse(is);
                         
-                        Log.i(tag, "end parse"); 
+                        Log.i(TAG, "end parse"); 
                         
                         List<RssItem> latestList = feedFarser.getRssFeed().getItemList();
                         
@@ -180,5 +186,60 @@ public class RssItemListActivity extends  Activity implements OnItemClickListene
         }  
     }; 
 	
- 
+	@Override
+	public void onMessage(final Message msg) {
+    	Log.i(TAG, "Get registered message from MsgCenter");
+    	
+    	this.runOnUiThread(new Runnable() {
+    		  public void run() {
+    			  handleMsg(msg);
+    		  }
+    		});	
+
+	}
+	
+	
+	private void handleMsg(Message msg){
+		
+		RssItem updatedItem = (RssItem) msg.obj;
+		
+		int itemIndex = 0;
+		
+		boolean bFound = false; 
+		Log.i(TAG, ""+updatedItem);
+
+		for(RssItem item : rssItemList){
+			Log.i(TAG, ""+item);
+			if(item.getId()==updatedItem.getId()){				
+				item.updateValues(updatedItem);
+				bFound=true;
+				break;
+			}
+			itemIndex++;
+		}
+		
+		if (!bFound){		
+			Log.i(TAG,"cannt find updatedItem");
+			return;
+		}	
+
+		int start = itemListView.getFirstVisiblePosition();
+		int end = itemListView.getLastVisiblePosition(); 
+		Log.i(TAG,"start="+start+",end="+end+",itemIndex="+itemIndex);
+		if(start<=itemIndex && itemIndex<=end){
+			View view = itemListView.getChildAt(itemIndex-start);
+			itemListView.getAdapter().getView(itemIndex, view, itemListView);
+		}
+		
+
+	}
+	
+    	
+    @Override  
+    protected void onDestroy() {  
+    	MsgCenter.instance().unRegister(this); 
+        super.onDestroy();  
+        Log.i(TAG, "onDestroy");  
+    }
+
 }

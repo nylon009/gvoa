@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,9 +28,11 @@ import com.gapp.gvoa.datatype.RssItem;
 import com.gapp.gvoa.db.DbRssItem;
 import com.gapp.gvoa.parser.ItemHtmlParser;
 import com.gapp.gvoa.util.GPreference;
+import com.gapp.gvoa.util.MsgCenter;
+import com.gapp.gvoa.util.MsgCenter.GSubscriber;
 import com.gapp.gvoa.util.NetworkUtil;
 
-public class ShowDetailActivity extends Activity 
+public class ShowDetailActivity extends Activity implements GSubscriber
 {
 	private final String tag = "ShowDetailActivity";
 	public static final int MSG_SUCCESS = 0;
@@ -61,9 +64,9 @@ public class ShowDetailActivity extends Activity
         super.onCreate(icicle);
         
         
+        MsgCenter.instance().register(this);        
         setContentView(R.layout.rss_detail);
-
-    	
+        
         rssItem = getIntent().getParcelableExtra(RssItem.class.getName()); 
         Log.i(tag, "load rssitem url="+rssItem.getLink());
         
@@ -216,6 +219,16 @@ public class ShowDetailActivity extends Activity
     	}
     } 
     
+    public void onMessage(final Message msg){
+    	Log.i(tag, "Get registered message from MsgCenter");
+	
+    	this.runOnUiThread(new Runnable() {
+    		  public void run() {
+    			  mHandler.handleMessage(msg);
+    		  }
+    		});
+    }
+    
     
     private Handler mHandler = new Handler() {  
         public void handleMessage (Message msg) {
@@ -231,12 +244,9 @@ public class ShowDetailActivity extends Activity
                 if(null!=rssItem.getMp3url())
                 {
                 	showExtra(EXTRA_SHOW_DOWNLOADING);
-                }                
+                }               
                 
-                checkAndDownMp3();
-                
-
-                
+                checkAndDownMp3();  
             	
                 break;    
             case MSG_FAILURE:  
@@ -258,6 +268,13 @@ public class ShowDetailActivity extends Activity
             	break;
             case MSG_MP3:
 
+            	RssItem downItem = (RssItem) msg.obj;
+            	if (rssItem!=downItem)
+            	{
+            		Log.i(tag, "downloaded item is not the same as current one");
+            		break;
+            	}
+            	
                 if(rssItem.getStatus()==RssItem.E_DOWN_MP3_OK)
                 {
                 	Toast.makeText(getApplication(), getApplication().getString(R.string.get_mp3_success), Toast.LENGTH_LONG).show();
@@ -378,6 +395,8 @@ public class ShowDetailActivity extends Activity
     	{
     		mediaPlayer.stop();
     	} 
+    	
+    	MsgCenter.instance().unRegister(this); 
         super.onDestroy();  
         Log.i(tag, "onDestroy");  
     }  

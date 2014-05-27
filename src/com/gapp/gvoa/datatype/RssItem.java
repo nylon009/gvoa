@@ -60,6 +60,20 @@ public class RssItem implements Parcelable,Comparable<RssItem> {
         }  
     };  
       
+    
+    public void updateValues(RssItem newItem)
+    {
+    	id=newItem.id;
+    	feedID=newItem.feedID;
+		title = newItem.title;
+		pubDate = newItem.pubDate;
+		link = newItem.link;
+		description = newItem.description;
+		fullText = newItem.fullText;
+		mp3url = newItem.mp3url;
+		localmp3=newItem.localmp3;
+		status = newItem.status;
+    }
 	
 	private RssItem(Parcel in) {
 		id = in.readInt();
@@ -121,7 +135,7 @@ public class RssItem implements Parcelable,Comparable<RssItem> {
 
 	public String toString()
 	{
-		return title;
+		return id+","+title+","+status;
 	}
 
 	public String getMp3url() {
@@ -147,6 +161,9 @@ public class RssItem implements Parcelable,Comparable<RssItem> {
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
+	
+	
+	
 	
 	@Override
 	public int describeContents() {
