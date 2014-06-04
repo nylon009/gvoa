@@ -107,6 +107,22 @@ public class NetworkUtil {
 	
 
     
+    public static boolean isReachable(String url){
+        try {
+          HttpURLConnection.setFollowRedirects(false);
+          // note : you may also need
+          //        HttpURLConnection.setInstanceFollowRedirects(false)
+          HttpURLConnection con =
+             (HttpURLConnection) new URL(url).openConnection();
+          con.setRequestMethod("HEAD");
+          return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+        }
+        catch (Exception e) {
+           e.printStackTrace();
+           return false;
+        }
+      }
+    
     public static String httpGetContent(String urlstr) throws  Exception
     {
     	String retStr = null;

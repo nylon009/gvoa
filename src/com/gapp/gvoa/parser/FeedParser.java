@@ -10,7 +10,7 @@ import com.gapp.gvoa.datatype.RssFeed;
 import com.gapp.gvoa.datatype.RssItem;
 
 public class FeedParser extends DefaultHandler {
-	public final String tag = "FeedParser";
+	public static final String tag = "FeedParser";
 	enum ParseType{
 		E_FEED,
 		E_ITEM

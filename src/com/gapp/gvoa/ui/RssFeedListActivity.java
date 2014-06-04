@@ -15,7 +15,7 @@ import com.gapp.gvoa.db.DbRssFeed;
 
 public class RssFeedListActivity extends ListActivity{
 
-	public final String tag = "RssListActivity";
+	public static final String tag = "RssListActivity";
     private List<RssFeed> rssFeedList = null;
     
 	@Override

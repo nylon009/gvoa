@@ -65,14 +65,14 @@ public class MsgCenter {
     private class MessageRunnable implements Runnable {
 
         public void run() {
-		    try {
-			      while (isRun) {
+        	while (isRun) {
+        	    try {			      
 			    	  Message msg = msgQueue.take();
-			          distributeMsg(msg);
-			      }
+			          distributeMsg(msg);			     
 			    } catch (InterruptedException ex) {
-			      Thread.currentThread().interrupt();
+			    	ex.printStackTrace();
 			    }
+             }
         }
     }
     

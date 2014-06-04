@@ -19,7 +19,7 @@ import com.gapp.gvoa.datatype.RssItem;
 
 public class DbRssItem {
 
-	public static final String tag = "DbRssItem";
+	public static final String TAG = "DbRssItem";
 	
     // Contacts table name
     public static final String TABLE_RSSITEM = "trssitem";
@@ -55,7 +55,7 @@ public class DbRssItem {
      * creates a new row
      * */
     public static void addRssItem(RssItem item) {
-    	Log.i(tag, "addRssItem: feedID="+item.getFeedID() +", title="+item.getTitle()); 
+    	Log.i(TAG, "addRssItem: feedID="+item.getFeedID() +", title="+item.getTitle()); 
         SQLiteDatabase db = GRSSDbHandler.getInstance().getWritableDatabase();
  
         ContentValues values = new ContentValues();
@@ -68,17 +68,11 @@ public class DbRssItem {
         values.put(KEY_MP3_URL, item.getMp3url());
         values.put(KEY_LOCAL_MP3,item.getLocalmp3());
         values.put(KEY_STATUS,item.getStatus());
-        // Check if row already existed in database
-        if (!isItemExists(db, item.getLink())) {
-            // site not existed, create a new row        	
-            long result =db.insert(TABLE_RSSITEM, null, values);
-            Log.i(tag, "addRssItem to db result "+ result);
-        } else {
-            // site already existed update the row
-            int result = updateItem(item);
-            Log.i(tag, "update RssItem to db result "+ result);
-        }
-       //db.close();
+     	
+        long result =db.insert(TABLE_RSSITEM, null, values);
+        Log.i(TAG, "addRssItem to db result "+ result);
+        
+        db.close();
     }
  
     /**
@@ -94,7 +88,7 @@ public class DbRssItem {
         {
             selectQuery =  selectQuery + " where "+ KEY_FEED_ID + "=" + feedid;
         }
-        Log.i(tag, selectQuery);
+        Log.i(TAG, selectQuery);
         SQLiteDatabase db = GRSSDbHandler.getInstance().getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
  
@@ -134,6 +128,7 @@ public class DbRssItem {
               
         });    
         
+        db.close();
         
         Collections.reverse(itemList);
         return itemList;
@@ -159,7 +154,7 @@ public class DbRssItem {
         // updating row return
         int update = db.update(TABLE_RSSITEM, values, KEY_ID + " = ?",
                 new String[] { String.valueOf(item.getId()) });
-        //db.close();
+        db.close();
         return update;
  
     }
@@ -179,7 +174,10 @@ public class DbRssItem {
      * Checking whether a site is already existed check is done by matching rss
      * link
      * */
-    public static boolean isItemExists(SQLiteDatabase db, String item_link) { 
+    public static boolean isItemExists( String item_link) { 
+    	
+    	SQLiteDatabase db = GRSSDbHandler.getInstance().getReadableDatabase();
+    	
     	boolean bexists = false; 
     	
     	String queryStr = "SELECT 1 FROM " + TABLE_RSSITEM + " WHERE " + KEY_LINK + " = ?";
@@ -193,6 +191,9 @@ public class DbRssItem {
         catch (SQLiteDoneException e)
         {
         	bexists = false;
+        }
+        finally{
+        	db.close();
         }
         return bexists;
     }

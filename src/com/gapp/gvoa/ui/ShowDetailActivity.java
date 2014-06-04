@@ -34,7 +34,7 @@ import com.gapp.gvoa.util.NetworkUtil;
 
 public class ShowDetailActivity extends Activity implements GSubscriber
 {
-	private final String tag = "ShowDetailActivity";
+	private static final String tag = "ShowDetailActivity";
 	public static final int MSG_SUCCESS = 0;
 	public static final int MSG_FAILURE = 1;
 	public static final int MSG_MP3_PROGRESS = 2;

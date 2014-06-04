@@ -39,12 +39,13 @@ import com.gapp.gvoa.db.DbRssItem;
 import com.gapp.gvoa.parser.FeedParser;
 import com.gapp.gvoa.util.MsgCenter;
 import com.gapp.gvoa.util.MsgCenter.GSubscriber;
+import com.gapp.gvoa.util.NetworkUtil;
 
 public class RssItemListActivity extends  Activity implements OnItemClickListener, GSubscriber {
     private static final int MSG_SUCCESS = 0;
     private static final int MSG_FAILURE = 1;
     
-	public final String TAG = "RssItemListActivity";
+	public static final String TAG = "RssItemListActivity";
     private List<RssItem> rssItemList = null;
     
     private RssFeed  rssFeed = null;    
@@ -171,14 +172,22 @@ public class RssItemListActivity extends  Activity implements OnItemClickListene
                         
                         List<RssItem> latestList = feedFarser.getRssFeed().getItemList();
                         
-                        for(RssItem item : latestList)
-                        {
-                        	DbRssItem.addRssItem(item);
+                        for(RssItem item : latestList) {
+                        	if(!DbRssItem.isItemExists(item.getLink()))	{
+                        		if(NetworkUtil.isReachable(item.getLink()))	{
+                        			DbRssItem.addRssItem(item);
+                        		}   else{
+                            		Log.w(TAG,"Not reachable:" +item.getLink());
+                            	}                   		
+                        	}else{
+                        		Log.i(TAG,"Already in DB:"+item.getTitle());
+                        	}
+                        	
                         }
                     }                	
                 }
             } catch (Exception e) {  
-            	 Log.e("GVOA", "Connect or parse Error", e);
+            	 Log.e(TAG, "Connect or parse Error", e);
                 mHandler.obtainMessage(MSG_FAILURE).sendToTarget();
                 return;  
             }  
