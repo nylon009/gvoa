@@ -173,14 +173,21 @@ public class RssItemListActivity extends  Activity implements OnItemClickListene
                         List<RssItem> latestList = feedFarser.getRssFeed().getItemList();
                         
                         for(RssItem item : latestList) {
-                        	if(!DbRssItem.isItemExists(item.getLink()))	{
+                        	boolean bExist = false;
+                        	for(RssItem oldItem: rssItemList){
+                        		if(item.getLink().equals(oldItem.getLink())){                        			
+                        			bExist = true;
+                        			Log.i(TAG,"Already in DB:"+item.getTitle());
+                        			break;
+                        		}
+                        	}                        	
+                        	
+                        	if(!bExist)	{
                         		if(NetworkUtil.isReachable(item.getLink()))	{
                         			DbRssItem.addRssItem(item);
                         		}   else{
                             		Log.w(TAG,"Not reachable:" +item.getLink());
                             	}                   		
-                        	}else{
-                        		Log.i(TAG,"Already in DB:"+item.getTitle());
                         	}
                         	
                         }
