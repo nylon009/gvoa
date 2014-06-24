@@ -26,6 +26,7 @@
     
     <string name="detail_text_size">Text size</string>
     <string name="detail_text_size_summary">Text size of RSS content</string>
-    
+    <string name="about">About</string>
+    <string name="appversion">GVOA Version unknown</string>
     
 </resources>

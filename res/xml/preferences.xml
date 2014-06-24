@@ -49,6 +49,14 @@
                 android:entryValues="@array/entries_detail_text_size_value"
                 android:dialogTitle="@string/detail_text_size" 
                 android:defaultValue = "20" />
+         
+         <PreferenceScreen
+                android:key="pref_about"
+                android:title="@string/about"
+                android:summary="@string/appversion">
+            <intent android:action="android.intent.action.VIEW"
+                    android:data="https://play.google.com/store/apps/details?id=com.gapp.gvoa" />
+        </PreferenceScreen>
             
     </PreferenceCategory>                
   
