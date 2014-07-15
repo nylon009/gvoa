@@ -26,13 +26,8 @@ public class ItemHtmlParser  {
 		
 		String respContent = NetworkUtil.httpGetContent(item.getLink());
 		
-		String tmpResp = respContent.replaceAll("(?i)<br[^>]*>", "br2n");
-		if(tmpResp==respContent)
-		{
-			Log.i(tag,"<BR> tag is not converted");
-		}
 
-	    Document doc = Jsoup.parse(tmpResp);
+	    Document doc = Jsoup.parse(respContent);
 
     	Element mp3link = doc.select("a[id=mp3]").first();
     	if(mp3link!=null)
@@ -47,7 +42,16 @@ public class ItemHtmlParser  {
 	    
     	Element content = doc.getElementById("content");
     	
-    	String contentStr=  content.text().replaceAll("br2n", "\n");
+    	Element imageEl = content.select("div.contentImage").first();
+
+    	if (imageEl!=null)
+    	{
+    		Log.i(tag,"remove image element from content"); 
+    		imageEl.remove();
+    	}
+
+    	String contentStr=  content.html();
+    	
     	Log.i(tag,contentStr);
     	
 	    item.setFullText(contentStr);

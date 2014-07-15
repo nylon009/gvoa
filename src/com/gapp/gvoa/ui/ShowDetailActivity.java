@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -71,7 +72,7 @@ public class ShowDetailActivity extends Activity implements GSubscriber
         Log.i(tag, "load rssitem url="+rssItem.getLink());
         
         TextView title= (TextView) findViewById(R.id.title);
-        title.setText(rssItem.getTitle());          
+        title.setText(Html.fromHtml(rssItem.getTitle()));          
         
         if(rssItem.getStatus()<RssItem.E_PARSE_TXT_OK)
         {
@@ -88,7 +89,7 @@ public class ShowDetailActivity extends Activity implements GSubscriber
         {
        	     TextView detail= (TextView) findViewById(R.id.detail);
        	     detail.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, GPreference.getPreferredTextSize());
-             detail.setText(rssItem.getFullText());
+             detail.setText(Html.fromHtml(rssItem.getFullText()));
              if(rssItem.getStatus()<RssItem.E_DOWN_MP3_OK)
              {
             	 if(null==rssItem.getMp3url())
@@ -238,7 +239,7 @@ public class ShowDetailActivity extends Activity implements GSubscriber
             	Log.i(tag, "Parse rssItem SUCCESS");
             	TextView detail= (TextView) findViewById(R.id.detail);
             	detail.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, GPreference.getPreferredTextSize());
-                detail.setText(rssItem.getFullText()); 
+                detail.setText(Html.fromHtml(rssItem.getFullText())); 
                 DbRssItem.updateItem(rssItem);                 
                 
                 if(null!=rssItem.getMp3url())
