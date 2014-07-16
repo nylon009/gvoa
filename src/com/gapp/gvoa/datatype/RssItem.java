@@ -135,7 +135,7 @@ public class RssItem implements Parcelable,Comparable<RssItem> {
 
 	public String toString()
 	{
-		return id+","+title+","+status;
+		return id+","+pubDate+","+title+","+status;
 	}
 
 	public String getMp3url() {

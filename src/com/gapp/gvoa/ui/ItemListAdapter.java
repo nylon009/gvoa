@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.gapp.gvoa.R;
 import com.gapp.gvoa.datatype.RssItem;
+import com.gapp.gvoa.util.GvoaUtil;
 
 public class ItemListAdapter extends ArrayAdapter<RssItem> {
 	public static final String TAG = "ItemListAdapter";
@@ -45,7 +46,7 @@ public class ItemListAdapter extends ArrayAdapter<RssItem> {
 	    RssItem item = rssItemList.get(position);
 	    textView.setText(item.getTitle() );
 
-	    if (item.getLocalmp3()!=null) {
+	    if (item.getLocalmp3()!=null&&GvoaUtil.isFileExists(item.getLocalmp3())) {
 	      imageView.setImageResource(R.drawable.emo_im_laughing);
 	    } else {
 	      imageView.setImageResource(R.drawable.emo_im_angel);

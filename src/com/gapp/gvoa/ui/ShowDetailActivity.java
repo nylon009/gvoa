@@ -29,13 +29,14 @@ import com.gapp.gvoa.datatype.RssItem;
 import com.gapp.gvoa.db.DbRssItem;
 import com.gapp.gvoa.parser.ItemHtmlParser;
 import com.gapp.gvoa.util.GPreference;
+import com.gapp.gvoa.util.GvoaUtil;
 import com.gapp.gvoa.util.MsgCenter;
 import com.gapp.gvoa.util.MsgCenter.GSubscriber;
 import com.gapp.gvoa.util.NetworkUtil;
 
 public class ShowDetailActivity extends Activity implements GSubscriber
 {
-	private static final String tag = "ShowDetailActivity";
+	private static final String TAG = "ShowDetailActivity";
 	public static final int MSG_SUCCESS = 0;
 	public static final int MSG_FAILURE = 1;
 	public static final int MSG_MP3_PROGRESS = 2;
@@ -69,7 +70,7 @@ public class ShowDetailActivity extends Activity implements GSubscriber
         setContentView(R.layout.rss_detail);
         
         rssItem = getIntent().getParcelableExtra(RssItem.class.getName()); 
-        Log.i(tag, "load rssitem url="+rssItem.getLink());
+        Log.i(TAG, "load rssitem url="+rssItem.getLink());
         
         TextView title= (TextView) findViewById(R.id.title);
         title.setText(Html.fromHtml(rssItem.getTitle()));          
@@ -90,7 +91,7 @@ public class ShowDetailActivity extends Activity implements GSubscriber
        	     TextView detail= (TextView) findViewById(R.id.detail);
        	     detail.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, GPreference.getPreferredTextSize());
              detail.setText(Html.fromHtml(rssItem.getFullText()));
-             if(rssItem.getStatus()<RssItem.E_DOWN_MP3_OK)
+             if(rssItem.getStatus()<RssItem.E_DOWN_MP3_OK||!GvoaUtil.isFileExists(rssItem.getLocalmp3()))
              {
             	 if(null==rssItem.getMp3url())
             	 {
@@ -106,9 +107,9 @@ public class ShowDetailActivity extends Activity implements GSubscriber
         {
         	showExtra(EXTRA_SHOW_NONE);
         }
-        else if(null==rssItem.getLocalmp3())
+        else if(null==rssItem.getLocalmp3()||!GvoaUtil.isFileExists(rssItem.getLocalmp3()))
         {
-        	Log.i(tag, "localmp3 is null");
+        	Log.i(TAG, "localmp3 is null");
         	showExtra(EXTRA_SHOW_DOWNLOADING);
         }
         else
@@ -139,7 +140,7 @@ public class ShowDetailActivity extends Activity implements GSubscriber
     		case EXTRA_SHOW_PLAYCONTROL:           	
             	if(null!=mDownloadView)
             	{
-        		    Log.i(tag,"remove mDownloadView");
+        		    Log.i(TAG,"remove mDownloadView");
             		detail_linear_layout_view.removeView(mDownloadView);
         		    mDownloadView.setVisibility(View.GONE);
             	}
@@ -221,7 +222,7 @@ public class ShowDetailActivity extends Activity implements GSubscriber
     } 
     
     public void onMessage(final Message msg){
-    	Log.i(tag, "Get registered message from MsgCenter");
+    	Log.i(TAG, "Get registered message from MsgCenter");
 	
     	this.runOnUiThread(new Runnable() {
     		  public void run() {
@@ -236,7 +237,7 @@ public class ShowDetailActivity extends Activity implements GSubscriber
             switch(msg.what) {  
             case MSG_SUCCESS:  
                 //reload date from db
-            	Log.i(tag, "Parse rssItem SUCCESS");
+            	Log.i(TAG, "Parse rssItem SUCCESS");
             	TextView detail= (TextView) findViewById(R.id.detail);
             	detail.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, GPreference.getPreferredTextSize());
                 detail.setText(Html.fromHtml(rssItem.getFullText())); 
@@ -272,7 +273,7 @@ public class ShowDetailActivity extends Activity implements GSubscriber
             	RssItem downItem = (RssItem) msg.obj;
             	if (rssItem!=downItem)
             	{
-            		Log.i(tag, "downloaded item is not the same as current one");
+            		Log.i(TAG, "downloaded item is not the same as current one");
             		break;
             	}
             	
@@ -342,7 +343,7 @@ public class ShowDetailActivity extends Activity implements GSubscriber
             try {
             	ItemHtmlParser.parseItemDetail(rssItem);
             } catch (Exception e) {  
-            	 Log.e(tag, "Connect or parse Error", e);
+            	 Log.e(TAG, "Connect or parse Error", e);
             	 rssItem.setStatus(RssItem.E_PARSE_TXT_FAIL);
                 mHandler.obtainMessage(MSG_FAILURE).sendToTarget();
                 return;  
@@ -355,7 +356,7 @@ public class ShowDetailActivity extends Activity implements GSubscriber
           
         @Override  
         public void run() {   
-        	Log.i(tag, "Start download mp3");
+        	Log.i(TAG, "Start download mp3");
             NetworkUtil.downloadMp3 (rssItem, mHandler);
             
         }  
@@ -368,27 +369,27 @@ public class ShowDetailActivity extends Activity implements GSubscriber
     @Override  
     protected void onStart() {  
         super.onStart();  
-        Log.i(tag, "onStart");  
+        Log.i(TAG, "onStart");  
     } 
     
     @Override  
     protected void onResume() {  
         super.onResume();  
         
-        Log.i(tag, "onResume");  
+        Log.i(TAG, "onResume");  
     }  
       
     @Override  
     protected void onPause() {  	
     	
         super.onPause();  
-        Log.i(tag, "onPause");  
+        Log.i(TAG, "onPause");  
     }  
  
     @Override  
     protected void onStop() {      	
         super.onStop();  
-        Log.i(tag, "onStop");  
+        Log.i(TAG, "onStop");  
     }  
     @Override  
     protected void onDestroy() {  
@@ -399,6 +400,6 @@ public class ShowDetailActivity extends Activity implements GSubscriber
     	
     	MsgCenter.instance().unRegister(this); 
         super.onDestroy();  
-        Log.i(tag, "onDestroy");  
+        Log.i(TAG, "onDestroy");  
     }  
 }

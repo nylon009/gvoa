@@ -15,7 +15,7 @@ import com.gapp.gvoa.db.DbRssFeed;
 
 public class RssFeedListActivity extends ListActivity{
 
-	public static final String tag = "RssListActivity";
+	private static final String TAG = "RssListActivity";
     private List<RssFeed> rssFeedList = null;
     
 	@Override
@@ -30,7 +30,7 @@ public class RssFeedListActivity extends ListActivity{
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id)	{
-		Log.i(tag, "item clicked! [" + rssFeedList.get(position).getTitle()
+		Log.i(TAG, "item clicked! [" + rssFeedList.get(position).getTitle()
 				+ "]");
 
 		RssFeed feed = rssFeedList.get(position);

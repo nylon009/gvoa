@@ -22,14 +22,14 @@ import com.gapp.gvoa.ui.ShowDetailActivity;
 
 public class NetworkUtil {
 
-	public static final String tag = "NetworkUtil";
+	public static final String TAG = "NetworkUtil";
 	
     public  static void downloadMp3(RssItem rssItem, Handler handler)
     {
     	
 		if (rssItem.getMp3url()==null)
 		{
-			Log.w(tag,"mp3url is null");
+			Log.w(TAG,"mp3url is null");
 			return;
 		}	
     	
@@ -40,8 +40,8 @@ public class NetworkUtil {
     		//urlConnection.setDoOutput(true);
     		urlConnection.connect();
 
-    		String mp3FilePath = GvoaUtil.getLocalMp3Path(rssItem.getMp3url());
-    		Log.w(tag,"save mp3 to "+mp3FilePath);
+    		String mp3FilePath = GvoaUtil.getLocalMp3Path(rssItem.getPubDate(), rssItem.getMp3url());
+    		Log.w(TAG,"save mp3 to "+mp3FilePath);
     		File file = new File(mp3FilePath);
     		if(file.isDirectory())
     		{
@@ -79,13 +79,13 @@ public class NetworkUtil {
     			msg.sendToTarget();    			
 
     		}
-    		Log.i(tag, "download "+downloadedSize+" of "+totalSize);
+    		Log.i(TAG, "download "+downloadedSize+" of "+totalSize);
     		//close the output stream when done
     		fileOutput.close();
     		rssItem.setLocalmp3(mp3FilePath);
     		rssItem.setStatus(RssItem.E_DOWN_MP3_OK);
         	int updatedmp3=DbRssItem.updateItem(rssItem);         	
-        	Log.i(tag, "updatedmp3="+updatedmp3);
+        	Log.i(TAG, "updatedmp3="+updatedmp3);
         	
         	//handler.obtainMessage(ShowDetailActivity.MSG_MP3).sendToTarget();
         	Message audioOKMsg= Message.obtain();
