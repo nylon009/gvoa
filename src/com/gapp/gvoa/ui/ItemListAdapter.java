@@ -47,9 +47,9 @@ public class ItemListAdapter extends ArrayAdapter<RssItem> {
 	    textView.setText(item.getTitle() );
 
 	    if (item.getLocalmp3()!=null&&GvoaUtil.isFileExists(item.getLocalmp3())) {
-	      imageView.setImageResource(R.drawable.emo_im_laughing);
+	      imageView.setImageResource(R.drawable.ic_lock_silent_mode_off);
 	    } else {
-	      imageView.setImageResource(R.drawable.emo_im_angel);
+	      imageView.setImageResource(R.drawable.ime_qwerty);
 	    }
 	    return rowView;
 	  }

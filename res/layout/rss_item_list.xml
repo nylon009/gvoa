@@ -20,7 +20,7 @@
 
         <ImageButton android:id="@+id/refresh"
             android:layout_width="36dp"
-            android:src="@drawable/spinner_white_48"
+            android:src="@drawable/ic_menu_refresh"
             android:layout_alignParentRight="true"   
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
